@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playdate Planner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#5D5CDE',
+                        primaryDark: '#4A49B0',
+                        primaryLight: '#7E7DE7'
+                    }
+                }
+            }
+        }
+
+        // Check for dark mode preference
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+    </script>
+</head>
+<body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen transition-colors duration-200">
+    <div class="container mx-auto px-4 py-6 max-w-4xl">
+        <!-- App Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-primary dark:text-primaryLight mb-2">Playdate Planner</h1>
+            <p class="text-gray-600 dark:text-gray-400">Find and schedule playdates for your children</p>
+        </header>
+
+        <!-- Main App Content -->
+        <div class="app-container">
+            <!-- Navigation Tabs -->
+            <div class="flex border-b border-gray-200 dark:border-gray-700 mb-6 overflow-x-auto">
+                <button id="tab-dashboard" class="tab-button active px-4 py-2 text-primary dark:text-primaryLight border-b-2 border-primary dark:border-primaryLight font-medium whitespace-nowrap">Dashboard</button>
+                <button id="tab-profile" class="tab-button px-4 py-2 text-gray-500 dark:text-gray-400 font-medium whitespace-nowrap">Family Profile</button>
+                <button id="tab-calendar" class="tab-button px-4 py-2 text-gray-500 dark:text-gray-400 font-medium whitespace-nowrap">Availability</button>
+                <button id="tab-map" class="tab-button px-4 py-2 text-gray-500 dark:text-gray-400 font-medium whitespace-nowrap">Map</button>
+                <button id="tab-playdates" class="tab-button px-4 py-2 text-gray-500 dark:text-gray-400 font-medium whitespace-nowrap">Playdates</button>
+            </div>
+
+            <!-- Dashboard Tab Content -->
+            <div id="content-dashboard" class="tab-content active">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Upcoming Playdates Section -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-5">
+                        <h2 class="text-xl font-semibold mb-4">Upcoming Playdates</h2>
+                        <div id="upcoming-playdates">
+                            <div class="border-l-4 border-green-500 pl-4 mb-4">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h3 class="font-medium">Park Playdate with Smith Family</h3>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">Saturday, Aug 12th, 2:00 PM</p>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">Central Park Playground</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100 text-xs px-2 py-1 rounded-full">Confirmed</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="border-l-4 border-yellow-500 pl-4">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h3 class="font-medium">Arts & Crafts with Johnson Family</h3>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">Wednesday, Aug 16th, 10:00 AM</p>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">Community Center</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-100 text-xs px-2 py-1 rounded-full">Pending</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Nearby Families Section -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-5">
+                        <h2 class="text-xl font-semibold mb-4">Families Looking for Playdates</h2>
+                        <div id="nearby-families">
+                            <div class="border-b dark:border-gray-700 pb-3 mb-3">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <h3 class="font-medium">The Collins Family</h3>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">2 children (ages 4 & 6)</p>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">Interests: Lego, Drawing, Soccer</p>
+                                        <p class="text-sm text-primary dark:text-primaryLight mt-1">Available: Aug 11, 14, 15</p>
+                                    </div>
+                                    <button class="bg-primary hover:bg-primaryDark text-white rounded-lg px-3 py-1 text-sm transition-colors duration-200">Request Playdate</button>
+                                </div>
+                            </div>
+                            <div class="border-b dark:border-gray-700 pb-3 mb-3">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <h3 class="font-medium">The Garcia Family</h3>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">1 child (age 5)</p>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">Interests: Swimming, Board Games</p>
+                                        <p class="text-sm text-primary dark:text-primaryLight mt-1">Available: Aug 12, 18, 19</p>
+                                    </div>
+                                    <button class="bg-primary hover:bg-primaryDark text-white rounded-lg px-3 py-1 text-sm transition-colors duration-200">Request Playdate</button>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <h3 class="font-medium">The Wang Family</h3>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">2 children (ages 3 & 7)</p>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">Interests: Sports, Nature, Reading</p>
+                                        <p class="text-sm text-primary dark:text-primaryLight mt-1">Available: Aug 13, 15, 17</p>
+                                    </div>
+                                    <button class="bg-primary hover:bg-primaryDark text-white rounded-lg px-3 py-1 text-sm transition-colors duration-200">Request Playdate</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Playdate Requests Section -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-5">
+                        <h2 class="text-xl font-semibold mb-4">Pending Requests</h2>
+                        <div id="pending-requests">
+                            <div class="border-b dark:border-gray-700 pb-3 mb-3">
+                                <h3 class="font-medium">Request from Martinez Family</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">For: Monday, Aug 14th, 3:00 PM</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Location: City Park Playground</p>
+                                <div class="mt-2 flex space-x-2">
+                                    <button class="bg-green-500 hover:bg-green-600 text-white rounded-lg px-3 py-1 text-sm transition-colors duration-200">Accept</button>
+                                    <button class="bg-red-500 hover:bg-red-600 text-white rounded-lg px-3 py-1 text-sm transition-colors duration-200">Decline</button>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="font-medium">Request from Patel Family</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">For: Thursday, Aug 17th, 10:00 AM</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Location: Children's Museum</p>
+                                <div class="mt-2 flex space-x-2">
+                                    <button class="bg-green-500 hover:bg-green-600 text-white rounded-lg px-3 py-1 text-sm transition-colors duration-200">Accept</button>
+                                    <button class="bg-red-500 hover:bg-red-600 text-white rounded-lg px-3 py-1 text-sm transition-colors duration-200">Decline</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Activity Ideas Section -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-5">
+                        <h2 class="text-xl font-semibold mb-4">Playdate Activity Ideas</h2>
+                        <ul class="space-y-2">
+                            <li class="flex items-center">
+                                <span class="text-primary dark:text-primaryLight mr-2"><i class="fas fa-palette"></i></span>
+                                <span>Arts & Crafts Session</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="text-primary dark:text-primaryLight mr-2"><i class="fas fa-cookie-bite"></i></span>
+                                <span>Baking or Cooking Class</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="text-primary dark:text-primaryLight mr-2"><i class="fas fa-hiking"></i></span>
+                                <span>Nature Scavenger Hunt</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="text-primary dark:text-primaryLight mr-2"><i class="fas fa-gamepad"></i></span>
+                                <span>Board Game Tournament</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="text-primary dark:text-primaryLight mr-2"><i class="fas fa-tint"></i></span>
+                                <span>Water Play Day</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="text-primary dark:text-primaryLight mr-2"><i class="fas fa-book"></i></span>
+                                <span>Book Club & Storytelling</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="text-primary dark:text-primaryLight mr-2"><i class="fas fa-theater-masks"></i></span>
+                                <span>Dress-up & Role Play</span>
+                            </li>
+                        </ul>
+                        <button id="get-more-ideas" class="mt-4 bg-primary hover:bg-primaryDark text-white rounded-lg px-4 py-2 text-sm transition-colors duration-200 w-full">Get More Ideas</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Tab Content -->
+            <div id="content-profile" class="tab-content hidden">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-5">
+                    <h2 class="text-xl font-semibold mb-4">Family Profile</h2>
+                    <form id="profile-form">
+                        <!-- Parent Information -->
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium mb-3">Parent Information</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="parent-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Your Name</label>
+                                    <input type="text" id="parent-name" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white" placeholder="Enter your name">
+                                </div>
+                                <div>
+                                    <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Phone Number</label>
+                                    <input type="tel" id="phone" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white" placeholder="(555) 123-4567">
+                                </div>
+                                <div>
+                                    <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email Address</label>
+                                    <input type="email" id="email" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white" placeholder="email@example.com">
+                                </div>
+                                <div>
+                                    <label for="neighborhood" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Neighborhood</label>
+                                    <input type="text" id="neighborhood" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white" placeholder="Enter your neighborhood">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Children Information -->
+                        <div class="mb-6">
+                            <div class="flex justify-between items-center mb-3">
+                                <h3 class="text-lg font-medium">Children Information</h3>
+                                <button type="button" id="add-child" class="text-primary dark:text-primaryLight hover:underline text-sm flex items-center">
+                                    <i class="fas fa-plus-circle mr-1"></i> Add Child
+                                </button>
+                            </div>
+                            
+                            <div id="children-container">
+                                <!-- Child 1 -->
+                                <div class="bg-gray-50 dark:bg-gray-750 p-4 rounded-lg mb-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Child's Name</label>
+                                            <input type="text" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white" placeholder="Child's name">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Age</label>
+                                            <input type="number" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white" placeholder="Age" min="0" max="18">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Gender</label>
+                                            <select class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                                <option value="">Select gender</option>
+                                                <option value="boy">Boy</option>
+                                                <option value="girl">Girl</option>
+                                                <option value="nonbinary">Non-binary</option>
+                                                <option value="prefer-not">Prefer not to say</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Interests & Activities</label>
+                                        <input type="text" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white" placeholder="e.g., sports, arts, music, reading">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Preferences -->
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium mb-3">Playdate Preferences</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="location-pref" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Preferred Locations</label>
+                                    <select id="location-pref" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white" multiple>
+                                        <option value="parks">Parks & Playgrounds</option>
+                                        <option value="homes">Home Playdates</option>
+                                        <option value="indoor">Indoor Play Areas</option>
+                                        <option value="museums">Museums & Educational</option>
+                                        <option value="libraries">Libraries</option>
+                                    </select>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Hold Ctrl/Cmd to select multiple</p>
+                                </div>
+                                <div>
+                                    <label for="distance" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Max Travel Distance</label>
+                                    <select id="distance" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                        <option value="5">Within 5 miles</option>
+                                        <option value="10">Within 10 miles</option>
+                                        <option value="15">Within 15 miles</option>
+                                        <option value="20">Within 20 miles</option>
+                                        <option value="25+">25+ miles</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Information -->
+                        <div class="mb-6">
+                            <label for="additional-info" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Additional Information</label>
+                            <textarea id="additional-info" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white h-24" placeholder="Any other information you'd like to share (allergies, special needs, etc.)"></textarea>
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button type="submit" class="bg-primary hover:bg-primaryDark text-white rounded-lg px-6 py-2 transition-colors duration-200">Save Profile</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Map Tab Content -->
+            <div id="content-map" class="tab-content hidden">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-5">
+                    <h2 class="text-xl font-semibold mb-4">Find Nearby Families</h2>
+                    <p class="text-gray-600 dark:text-gray-400 mb-6">Discover families in your area who are looking for playdates</p>
+                    
+                    <!-- Search and Filter Controls -->
+                    <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label for="map-distance" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Distance</label>
+                            <select id="map-distance" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                <option value="5">Within 5 miles</option>
+                                <option value="10" selected>Within 10 miles</option>
+                                <option value="15">Within 15 miles</option>
+                                <option value="20">Within 20 miles</option>
+                                <option value="25">Within 25 miles</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="map-age-range" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Age Range</label>
+                            <select id="map-age-range" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                <option value="all" selected>All Ages</option>
+                                <option value="0-2">0-2 years</option>
+                                <option value="3-5">3-5 years</option>
+                                <option value="6-8">6-8 years</option>
+                                <option value="9-12">9-12 years</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="map-available" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Availability</label>
+                            <select id="map-available" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                <option value="all" selected>All Families</option>
+                                <option value="this-week">Available This Week</option>
+                                <option value="weekend">Available This Weekend</option>
+                                <option value="weekday">Available Weekdays</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Map Container -->
+                    <div class="w-full h-96 rounded-lg overflow-hidden mb-6 bg-gray-100 dark:bg-gray-700 relative" id="map-container">
+                        <div id="google-map" class="w-full h-full"></div>
+                        <div id="map-loading" class="absolute inset-0 flex items-center justify-center bg-white dark:bg-gray-800 bg-opacity-90 dark:bg-opacity-90">
+                            <div class="text-center">
+                                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary dark:border-primaryLight mx-auto"></div>
+                                <p class="mt-2 text-gray-700 dark:text-gray-300">Loading map...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Family List Under Map -->
+                    <h3 class="text-lg font-medium mb-3">Families Near You</h3>
+                    <div class="space-y-4" id="map-families-list">
+                        <!-- Family cards will be dynamically inserted here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar Tab Content -->
+            <div id="content-calendar" class="tab-content hidden">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-5">
+                    <h2 class="text-xl font-semibold mb-4">Set Your Availability</h2>
+                    <p class="text-gray-600 dark:text-gray-400 mb-6">Mark the dates and times when you're available for playdates</p>
+                    
+                    <!-- Month Navigation -->
+                    <div class="flex justify-between items-center mb-4">
+                        <button id="prev-month" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primaryLight p-2">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <h3 id="current-month" class="text-lg font-medium">August 2023</h3>
+                        <button id="next-month" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primaryLight p-2">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Calendar Grid -->
+                    <div class="calendar-grid mb-6">
+                        <!-- Days of Week Header -->
+                        <div class="grid grid-cols-7 gap-1 mb-2 text-center">
+                            <div class="text-sm font-medium">Sun</div>
+                            <div class="text-sm font-medium">Mon</div>
+                            <div class="text-sm font-medium">Tue</div>
+                            <div class="text-sm font-medium">Wed</div>
+                            <div class="text-sm font-medium">Thu</div>
+                            <div class="text-sm font-medium">Fri</div>
+                            <div class="text-sm font-medium">Sat</div>
+                        </div>
+                        
+                        <!-- Calendar Days -->
+                        <div class="grid grid-cols-7 gap-1">
+                            <!-- Week 1 -->
+                            <div class="text-gray-400 dark:text-gray-600 h-20 p-1 border border-gray-200 dark:border-gray-700 rounded">30</div>
+                            <div class="text-gray-400 dark:text-gray-600 h-20 p-1 border border-gray-200 dark:border-gray-700 rounded">31</div>
+                            <div class="h-20 p-1 border border-gray-200 dark:border-gray-700 rounded cursor-pointer hover:border-primary dark:hover:border-primaryLight">
+                                <div class="text-sm mb-1">1</div>
+                            </div>
+                            <div class="h-20 p-1 border border-gray-200 dark:border-gray-700 rounded cursor-pointer hover:border-primary dark:hover:border-primaryLight">
+                                <div class="text-sm mb-1">2</div>
+                            </div>
+                            <div class="h-20 p-1 border border-gray-200 dark:border-gray-700 rounded cursor-pointer hover:border-primary dark:hover:border-primaryLight">
+                                <div class="text-sm mb-1">3</div>
+                            </div>
+                            <div class="h-20 p-1 border border-gray-200 dark:border-gray-700 rounded cursor-pointer hover:border-primary dark:hover:border-primaryLight">
+                                <div class="text-sm mb-1">4</div>
+                            </div>
+                            <div class="h-20 p-1 border border-gray-200 dark:border-gray-700 rounded cursor-pointer hover:border-primary dark:hover:border-primaryLight">
+                                <div class="text-sm mb-1">5</div>
+                            </div>
+                            
+                            <!-- Week 2 -->
+                            <div class="h-20 p-1 border border-gray-200 dark:border-gray-700 rounded cursor-pointer hover:border-primary dark:hover:border-primaryLight">
+                                <div class="text-sm mb-1">6</div>
+                            </div>
+                            <div class="h-20 p-1 border border-gray-200 dark:border-gray-700 rounded cursor-pointer hover:border-primary dark:hover:border-primaryLight">
+                                <div class="text-sm mb-1">7</div>
+                            </div>
+                            <div class="h-20 p-1 border border-gray-200 dark:border-gray-700 rounded cursor-pointer hover:border-primary dark:hover:border-primaryLight">
+                                <div class="text-sm mb-1">8</div>
+                            </div>
+                            <div class="h-20 p-1 border border-gray-200 dark:border-gray-700 rounded cursor-pointer hover:border-primary dark:hover:border-primaryLight">
+                                <div class="text-sm mb-1">9</div>
+                            </div>
+                            <div class="h-20 p-1 border border-gray-200 dark:border-gray-700 rounded cursor-pointer hover:border-primary dark:hover:border-primaryLight">
+                                <div class="text-sm mb-1">10</div>
+                            </div>
+                            <div class="h-20 p-1 border border-gray-200 dark:border-gray-700 rounded cursor-pointer hover:border-primary dark:hover:border-primaryLight">
+                                <div class="text-sm mb-1">11</div>
+                                <div class="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs p-1 rounded mb-1">Available</div>
+                            </div>
+                            <div class="h-20 p-1 border border-gray-200 dark:border-gray-700 rounded cursor-pointer hover:border-primary dark:hover:border-primaryLight">
+                                <div class="text-sm mb-1">12</div>
+                                <div class="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs p-1 rounded mb-1">Available</div>
+                                <div class="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs p-1 rounded">Confirmed</div>
+                            </div>
+                            
+                            <!-- Week 3 -->
+                            <div class="h-20 p-1 border border-gray-200 dark:border-gray-700 rounded cursor-pointer hover:border-primary dark:hover:border-primaryLight">
+                                <div class="text-sm mb-1">13</div>
+                            </div>
+                            <div class="h-20 p-1 border border-gray-200 dark:border-gray-700 rounded cursor-pointer hover:border-primary dark:hover:border-primaryLight bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-700">
+                                <div class="text-sm mb-1">14</div>
+                                <div class="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs p-1 rounded mb-1">Available</div>
+                                <div class="bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 text-xs p-1 rounded">Pending</div>
+                            </div>
+                            <div class="h-20 p-1 border border-gray-200 dark:border-gray-700 rounded cursor-pointer hover:border-primary dark:hover:border-primaryLight">
+                                <div class="text-sm mb-1">15</div>
+                                <div class="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs p-1 rounded">Available</div>
+                            </div>
+                            <div class="h-20 p-1 border border-gray-200 dark:border-gray-700 rounded cursor-pointer hover:border-primary dark:hover:border-primaryLight">
+                                <div class="text-sm mb-1">16</div>
+                                <div class="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs p-1 rounded">Confirmed</div>
+                            </div>
+                            <div class="h-20 p-1 border border-gray-200 dark:border-gray-700 rounded cursor-pointer hover:border-primary dark:hover:border-primaryLight">
+                                <div class="text-sm mb-1">17</div>
+                                <div class="bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 text-xs p-1 rounded">Pending</div>
+                            </div>
+                            <div class="h-20 p-1 border border-gray-200 dark:border-gray-700 rounded cursor-pointer hover:border-primary dark:hover:border-primaryLight">
+                                <div class="text-sm mb-1">18</div>
+                            </div>
+                            <div class="h-20 p-1 border border-gray-200 dark:border-gray-700 rounded cursor-pointer hover:border-primary dark:hover:border-primaryLight">
+                                <div class="text-sm mb-1">19</div>
+                            </div>
+                            
+                            <!-- Remaining weeks would follow the same pattern -->
+                            <!-- For simplicity, I'm just showing a few rows -->
+                        </div>
+                    </div>
+                    
+                    <!-- Time Preferences -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-medium mb-3">Time Preferences</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="text-md font-medium mb-2">Weekdays</h4>
+                                <div class="space-y-2">
+                                    <div class="flex items-center">
+                                        <input type="checkbox" id="weekday-morning" class="h-5 w-5 text-primary focus:ring-primary dark:focus:ring-primaryLight">
+                                        <label for="weekday-morning" class="ml-2">Morning (9am - 12pm)</label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="checkbox" id="weekday-afternoon" class="h-5 w-5 text-primary focus:ring-primary dark:focus:ring-primaryLight">
+                                        <label for="weekday-afternoon" class="ml-2">Afternoon (12pm - 4pm)</label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="checkbox" id="weekday-evening" class="h-5 w-5 text-primary focus:ring-primary dark:focus:ring-primaryLight">
+                                        <label for="weekday-evening" class="ml-2">Evening (4pm - 7pm)</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-md font-medium mb-2">Weekends</h4>
+                                <div class="space-y-2">
+                                    <div class="flex items-center">
+                                        <input type="checkbox" id="weekend-morning" class="h-5 w-5 text-primary focus:ring-primary dark:focus:ring-primaryLight">
+                                        <label for="weekend-morning" class="ml-2">Morning (9am - 12pm)</label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="checkbox" id="weekend-afternoon" class="h-5 w-5 text-primary focus:ring-primary dark:focus:ring-primaryLight">
+                                        <label for="weekend-afternoon" class="ml-2">Afternoon (12pm - 4pm)</label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="checkbox" id="weekend-evening" class="h-5 w-5 text-primary focus:ring-primary dark:focus:ring-primaryLight">
+                                        <label for="weekend-evening" class="ml-2">Evening (4pm - 7pm)</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end">
+                        <button id="save-availability" class="bg-primary hover:bg-primaryDark text-white rounded-lg px-6 py-2 transition-colors duration-200">Save Availability</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Playdates Tab Content -->
+            <div id="content-playdates" class="tab-content hidden">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-5">
+                    <h2 class="text-xl font-semibold mb-4">Manage Playdates</h2>
+                    
+                    <!-- Tabs for Playdates -->
+                    <div class="border-b border-gray-200 dark:border-gray-700 mb-4">
+                        <ul class="flex flex-wrap -mb-px">
+                            <li class="mr-2">
+                                <button class="inline-block py-2 px-4 text-primary dark:text-primaryLight border-b-2 border-primary dark:border-primaryLight font-medium" id="tab-upcoming">Upcoming</button>
+                            </li>
+                            <li class="mr-2">
+                                <button class="inline-block py-2 px-4 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 font-medium" id="tab-pending">Pending</button>
+                            </li>
+                            <li class="mr-2">
+                                <button class="inline-block py-2 px-4 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 font-medium" id="tab-past">Past</button>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Upcoming Playdates Content -->
+                    <div id="content-upcoming" class="active">
+                        <div class="space-y-4">
+                            <!-- Playdate 1 -->
+                            <div class="bg-white dark:bg-gray-750 border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
+                                <div class="flex justify-between">
+                                    <div>
+                                        <h3 class="font-semibold text-lg">Park Playdate with Smith Family</h3>
+                                        <div class="text-gray-600 dark:text-gray-400 mt-1 space-y-1">
+                                            <p class="flex items-center"><i class="fas fa-calendar-alt w-5 text-primary dark:text-primaryLight"></i> Saturday, Aug 12th, 2:00 PM</p>
+                                            <p class="flex items-center"><i class="fas fa-map-marker-alt w-5 text-primary dark:text-primaryLight"></i> Central Park Playground</p>
+                                            <p class="flex items-center"><i class="fas fa-child w-5 text-primary dark:text-primaryLight"></i> Their children: Emma (6), Liam (4)</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col items-end justify-between">
+                                        <span class="bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100 text-xs px-2 py-1 rounded-full">Confirmed</span>
+                                        <div class="space-x-2 mt-4">
+                                            <button class="text-sm bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded transition-colors duration-200"><i class="fas fa-comment-alt mr-1"></i> Message</button>
+                                            <button class="text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded transition-colors duration-200"><i class="fas fa-times mr-1"></i> Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Playdate 2 -->
+                            <div class="bg-white dark:bg-gray-750 border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
+                                <div class="flex justify-between">
+                                    <div>
+                                        <h3 class="font-semibold text-lg">Arts & Crafts with Johnson Family</h3>
+                                        <div class="text-gray-600 dark:text-gray-400 mt-1 space-y-1">
+                                            <p class="flex items-center"><i class="fas fa-calendar-alt w-5 text-primary dark:text-primaryLight"></i> Wednesday, Aug 16th, 10:00 AM</p>
+                                            <p class="flex items-center"><i class="fas fa-map-marker-alt w-5 text-primary dark:text-primaryLight"></i> Community Center</p>
+                                            <p class="flex items-center"><i class="fas fa-child w-5 text-primary dark:text-primaryLight"></i> Their children: Sophia (5)</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col items-end justify-between">
+                                        <span class="bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-100 text-xs px-2 py-1 rounded-full">Pending</span>
+                                        <div class="space-x-2 mt-4">
+                                            <button class="text-sm bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded transition-colors duration-200"><i class="fas fa-comment-alt mr-1"></i> Message</button>
+                                            <button class="text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded transition-colors duration-200"><i class="fas fa-times mr-1"></i> Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pending Playdates Content (hidden by default) -->
+                    <div id="content-pending" class="hidden space-y-4">
+                        <!-- Pending Playdate 1 -->
+                        <div class="bg-white dark:bg-gray-750 border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
+                            <div class="flex justify-between">
+                                <div>
+                                    <h3 class="font-semibold text-lg">Request from Martinez Family</h3>
+                                    <div class="text-gray-600 dark:text-gray-400 mt-1 space-y-1">
+                                        <p class="flex items-center"><i class="fas fa-calendar-alt w-5 text-primary dark:text-primaryLight"></i> Monday, Aug 14th, 3:00 PM</p>
+                                        <p class="flex items-center"><i class="fas fa-map-marker-alt w-5 text-primary dark:text-primaryLight"></i> City Park Playground</p>
+                                        <p class="flex items-center"><i class="fas fa-child w-5 text-primary dark:text-primaryLight"></i> Their children: Miguel (7), Isabella (5)</p>
+                                        <p class="flex items-center"><i class="fas fa-comment w-5 text-primary dark:text-primaryLight"></i> "We'd love to meet up for some outdoor play!"</p>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-end justify-between">
+                                    <span class="bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-100 text-xs px-2 py-1 rounded-full">Awaiting Response</span>
+                                    <div class="space-x-2 mt-4">
+                                        <button class="text-sm bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded transition-colors duration-200"><i class="fas fa-check mr-1"></i> Accept</button>
+                                        <button class="text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded transition-colors duration-200"><i class="fas fa-times mr-1"></i> Decline</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Pending Playdate 2 -->
+                        <div class="bg-white dark:bg-gray-750 border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
+                            <div class="flex justify-between">
+                                <div>
+                                    <h3 class="font-semibold text-lg">Request from Patel Family</h3>
+                                    <div class="text-gray-600 dark:text-gray-400 mt-1 space-y-1">
+                                        <p class="flex items-center"><i class="fas fa-calendar-alt w-5 text-primary dark:text-primaryLight"></i> Thursday, Aug 17th, 10:00 AM</p>
+                                        <p class="flex items-center"><i class="fas fa-map-marker-alt w-5 text-primary dark:text-primaryLight"></i> Children's Museum</p>
+                                        <p class="flex items-center"><i class="fas fa-child w-5 text-primary dark:text-primaryLight"></i> Their children: Arjun (6), Priya (3)</p>
+                                        <p class="flex items-center"><i class="fas fa-comment w-5 text-primary dark:text-primaryLight"></i> "Would love to explore the new science exhibit together!"</p>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-end justify-between">
+                                    <span class="bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-100 text-xs px-2 py-1 rounded-full">Awaiting Response</span>
+                                    <div class="space-x-2 mt-4">
+                                        <button class="text-sm bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded transition-colors duration-200"><i class="fas fa-check mr-1"></i> Accept</button>
+                                        <button class="text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded transition-colors duration-200"><i class="fas fa-times mr-1"></i> Decline</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Past Playdates Content (hidden by default) -->
+                    <div id="content-past" class="hidden space-y-4">
+                        <div class="bg-white dark:bg-gray-750 border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
+                            <div class="flex justify-between">
+                                <div>
+                                    <h3 class="font-semibold text-lg">Swimming with Davis Family</h3>
+                                    <div class="text-gray-600 dark:text-gray-400 mt-1 space-y-1">
+                                        <p class="flex items-center"><i class="fas fa-calendar-alt w-5 text-primary dark:text-primaryLight"></i> Sunday, July 30th, 1:00 PM</p>
+                                        <p class="flex items-center"><i class="fas fa-map-marker-alt w-5 text-primary dark:text-primaryLight"></i> Community Pool</p>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-end justify-between">
+                                    <div class="text-gray-500 dark:text-gray-400 text-sm">Completed</div>
+                                    <button class="text-sm bg-primary hover:bg-primaryDark text-white px-3 py-1 rounded transition-colors duration-200 mt-4"><i class="fas fa-star mr-1"></i> Leave Review</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- New Playdate Request Modal (hidden by default) -->
+            <div id="request-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-semibold">Request Playdate</h3>
+                        <button id="close-modal" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div id="requesting-family" class="mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
+                        <h4 class="font-medium mb-2">The Collins Family</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">2 children (ages 4 & 6)</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Interests: Lego, Drawing, Soccer</p>
+                    </div>
+                    
+                    <form id="request-form">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select a Date</label>
+                            <select class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                <option value="">Choose a date</option>
+                                <option value="aug11">Friday, Aug 11th</option>
+                                <option value="aug14">Monday, Aug 14th</option>
+                                <option value="aug15">Tuesday, Aug 15th</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Time</label>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <select class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                        <option value="">Start time</option>
+                                        <option value="9:00">9:00 AM</option>
+                                        <option value="10:00">10:00 AM</option>
+                                        <option value="11:00">11:00 AM</option>
+                                        <option value="12:00">12:00 PM</option>
+                                        <option value="13:00">1:00 PM</option>
+                                        <option value="14:00">2:00 PM</option>
+                                        <option value="15:00">3:00 PM</option>
+                                        <option value="16:00">4:00 PM</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <select class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                        <option value="">End time</option>
+                                        <option value="10:00">10:00 AM</option>
+                                        <option value="11:00">11:00 AM</option>
+                                        <option value="12:00">12:00 PM</option>
+                                        <option value="13:00">1:00 PM</option>
+                                        <option value="14:00">2:00 PM</option>
+                                        <option value="15:00">3:00 PM</option>
+                                        <option value="16:00">4:00 PM</option>
+                                        <option value="17:00">5:00 PM</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Location</label>
+                            <select class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                <option value="">Choose a location</option>
+                                <option value="park">Local Park</option>
+                                <option value="library">Public Library</option>
+                                <option value="playarea">Indoor Play Area</option>
+                                <option value="home">Your Home</option>
+                                <option value="other">Other (specify below)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Location Details (Optional)</label>
+                            <input type="text" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white" placeholder="E.g., Name of the park, address, etc.">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Message (Optional)</label>
+                            <textarea class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white h-20" placeholder="Any details you'd like to share about the playdate..."></textarea>
+                        </div>
+                        
+                        <div class="flex justify-end space-x-3">
+                            <button type="button" id="cancel-request" class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">Cancel</button>
+                            <button type="submit" class="px-4 py-2 bg-primary hover:bg-primaryDark text-white rounded-lg transition-colors duration-200">Send Request</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Loading State for API calls -->
+            <div id="loading-overlay" class="fixed inset-0 flex items-center justify-center bg-white bg-opacity-75 dark:bg-gray-900 dark:bg-opacity-75 z-50 hidden">
+                <div class="text-center p-6 rounded-lg">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary dark:border-primaryLight mx-auto"></div>
+                    <p class="mt-4 text-gray-700 dark:text-gray-300 text-lg" id="loading-text">Loading...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY&libraries=places"></script>
+    
+    <script>
+        // Tab navigation functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Get the tab ID from the button ID
+                    const tabId = button.id.replace('tab-', 'content-');
+                    
+                    // Remove active class from all buttons and contents
+                    tabButtons.forEach(btn => {
+                        btn.classList.remove('active', 'text-primary', 'dark:text-primaryLight', 'border-b-2', 'border-primary', 'dark:border-primaryLight');
+                        btn.classList.add('text-gray-500', 'dark:text-gray-400');
+                    });
+                    tabContents.forEach(content => {
+                        content.classList.add('hidden');
+                        content.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked button and corresponding content
+                    button.classList.add('active', 'text-primary', 'dark:text-primaryLight', 'border-b-2', 'border-primary', 'dark:border-primaryLight');
+                    button.classList.remove('text-gray-500', 'dark:text-gray-400');
+                    
+                    const content = document.getElementById(tabId);
+                    if (content) {
+                        content.classList.remove('hidden');
+                        content.classList.add('active');
+                    }
+                });
+            });
+            
+            // Handle sub-tabs in playdates section
+            const playdateTabs = document.querySelectorAll('#tab-upcoming, #tab-pending, #tab-past');
+            const playdateContents = document.querySelectorAll('#content-upcoming, #content-pending, #content-past');
+            
+            playdateTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Get content ID from tab ID
+                    const contentId = tab.id.replace('tab-', 'content-');
+                    
+                    // Remove active class from all tabs and contents
+                    playdateTabs.forEach(t => {
+                        t.classList.remove('text-primary', 'dark:text-primaryLight', 'border-b-2', 'border-primary', 'dark:border-primaryLight');
+                        t.classList.add('text-gray-500', 'dark:text-gray-400');
+                    });
+                    playdateContents.forEach(content => {
+                        content.classList.add('hidden');
+                    });
+                    
+                    // Add active class to clicked tab and its content
+                    tab.classList.add('text-primary', 'dark:text-primaryLight', 'border-b-2', 'border-primary', 'dark:border-primaryLight');
+                    tab.classList.remove('text-gray-500', 'dark:text-gray-400');
+                    
+                    const content = document.getElementById(contentId);
+                    if (content) {
+                        content.classList.remove('hidden');
+                    }
+                });
+            });
+            
+            // Modal functionality
+            const requestButtons = document.querySelectorAll('.nearby-families button, #nearby-families button');
+            const requestModal = document.getElementById('request-modal');
+            const closeModal = document.getElementById('close-modal');
+            const cancelRequest = document.getElementById('cancel-request');
+            
+            requestButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    requestModal.classList.remove('hidden');
+                });
+            });
+            
+            closeModal.addEventListener('click', () => {
+                requestModal.classList.add('hidden');
+            });
+            
+            cancelRequest.addEventListener('click', () => {
+                requestModal.classList.add('hidden');
+            });
+            
+            // Close modal if clicked outside
+            window.addEventListener('click', (e) => {
+                if (e.target === requestModal) {
+                    requestModal.classList.add('hidden');
+                }
+            });
+            
+            // Calendar functionality
+            const calendarDays = document.querySelectorAll('.calendar-grid .cursor-pointer');
+            
+            calendarDays.forEach(day => {
+                day.addEventListener('click', () => {
+                    // Toggle selected state
+                    const isSelected = day.classList.contains('border-primary');
+                    
+                    if (isSelected) {
+                        day.classList.remove('border-primary', 'dark:border-primaryLight');
+                    } else {
+                        day.classList.add('border-primary', 'dark:border-primaryLight');
+                        
+                        // Add "Available" tag if doesn't exist
+                        if (!day.querySelector('.bg-green-100')) {
+                            const dateNumber = day.querySelector('.text-sm').textContent;
+                            const availableTag = document.createElement('div');
+                            availableTag.className = 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs p-1 rounded';
+                            availableTag.textContent = 'Available';
+                            day.appendChild(availableTag);
+                        }
+                    }
+                });
+            });
+            
+            // Profile functionality
+            const addChildButton = document.getElementById('add-child');
+            const childrenContainer = document.getElementById('children-container');
+            
+            addChildButton.addEventListener('click', () => {
+                const childTemplate = `
+                <div class="bg-gray-50 dark:bg-gray-750 p-4 rounded-lg mb-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Child's Name</label>
+                            <input type="text" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white" placeholder="Child's name">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Age</label>
+                            <input type="number" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white" placeholder="Age" min="0" max="18">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Gender</label>
+                            <select class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                <option value="">Select gender</option>
+                                <option value="boy">Boy</option>
+                                <option value="girl">Girl</option>
+                                <option value="nonbinary">Non-binary</option>
+                                <option value="prefer-not">Prefer not to say</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Interests & Activities</label>
+                        <input type="text" class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white" placeholder="e.g., sports, arts, music, reading">
+                    </div>
+                    <div class="mt-2 text-right">
+                        <button type="button" class="remove-child text-red-500 hover:text-red-700 text-sm">
+                            <i class="fas fa-trash-alt mr-1"></i> Remove
+                        </button>
+                    </div>
+                </div>
+                `;
+                
+                // Add new child form to container
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = childTemplate;
+                const newChildForm = tempDiv.firstElementChild;
+                
+                childrenContainer.appendChild(newChildForm);
+                
+                // Add event listener to remove button
+                const removeButton = newChildForm.querySelector('.remove-child');
+                removeButton.addEventListener('click', () => {
+                    newChildForm.remove();
+                });
+            });
+            
+            // Form submission handlers
+            const profileForm = document.getElementById('profile-form');
+            profileForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                showLoadingOverlay('Saving profile...');
+                
+                // Simulate API call
+                setTimeout(() => {
+                    hideLoadingOverlay();
+                    showAlert('Profile saved successfully!', 'success');
+                }, 1500);
+            });
+            
+            // Save availability
+            const saveAvailabilityButton = document.getElementById('save-availability');
+            saveAvailabilityButton.addEventListener('click', () => {
+                showLoadingOverlay('Saving availability...');
+                
+                // Simulate API call
+                setTimeout(() => {
+                    hideLoadingOverlay();
+                    showAlert('Availability saved successfully!', 'success');
+                }, 1500);
+            });
+            
+            // Google Maps functionality
+            let map;
+            let markers = [];
+            const familyLocations = [
+                {
+                    id: 1,
+                    name: "The Collins Family",
+                    children: "2 children (ages 4 & 6)",
+                    interests: "Lego, Drawing, Soccer",
+                    availability: "Aug 11, 14, 15",
+                    lat: 40.7128, // NYC coordinates (for demo purposes)
+                    lng: -74.0060,
+                    distance: 2.3
+                },
+                {
+                    id: 2,
+                    name: "The Garcia Family",
+                    children: "1 child (age 5)",
+                    interests: "Swimming, Board Games",
+                    availability: "Aug 12, 18, 19",
+                    lat: 40.7282, // Slightly different coords
+                    lng: -73.9942,
+                    distance: 3.7
+                },
+                {
+                    id: 3,
+                    name: "The Wang Family",
+                    children: "2 children (ages 3 & 7)",
+                    interests: "Sports, Nature, Reading",
+                    availability: "Aug 13, 15, 17",
+                    lat: 40.7357,
+                    lng: -74.0014,
+                    distance: 4.2
+                },
+                {
+                    id: 4,
+                    name: "The Smith Family",
+                    children: "2 children (ages 4 & 5)",
+                    interests: "Arts & Crafts, Music, Dancing",
+                    availability: "Aug 10, 12, 16",
+                    lat: 40.7023,
+                    lng: -73.9876,
+                    distance: 5.1
+                },
+                {
+                    id: 5,
+                    name: "The Patel Family",
+                    children: "2 children (ages 2 & 6)",
+                    interests: "Puzzles, Science Experiments, Cooking",
+                    availability: "Aug 14, 17, 19",
+                    lat: 40.7411,
+                    lng: -73.9897,
+                    distance: 6.8
+                },
+                {
+                    id: 6,
+                    name: "The Martinez Family",
+                    children: "2 children (ages 5 & 8)",
+                    interests: "Outdoor Play, Biking, Storytelling",
+                    availability: "Aug 11, 14, 18",
+                    lat: 40.7214,
+                    lng: -74.0165,
+                    distance: 7.3
+                }
+            ];
+            
+            // Initialize map when tab is selected
+            document.getElementById('tab-map').addEventListener('click', () => {
+                // Only initialize if not already done
+                if (!map) {
+                    initMap();
+                }
+            });
+            
+            function initMap() {
+                const mapOptions = {
+                    center: { lat: 40.7128, lng: -74.0060 }, // Default center (New York City)
+                    zoom: 12,
+                    styles: isDarkMode() ? darkMapStyle : lightMapStyle,
+                    mapTypeControl: false,
+                    streetViewControl: false,
+                    fullscreenControl: false
+                };
+                
+                map = new google.maps.Map(document.getElementById('google-map'), mapOptions);
+                
+                // Add markers for family locations
+                familyLocations.forEach(family => {
+                    addMarker(family);
+                });
+                
+                // Update family list
+                updateFamilyList(familyLocations);
+                
+                // Hide loading overlay
+                document.getElementById('map-loading').classList.add('hidden');
+                
+                // Add filter change event listeners
+                document.getElementById('map-distance').addEventListener('change', filterFamilies);
+                document.getElementById('map-age-range').addEventListener('change', filterFamilies);
+                document.getElementById('map-available').addEventListener('change', filterFamilies);
+                
+                // Handle dark/light mode changes
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                    if (map) {
+                        map.setOptions({ styles: e.matches ? darkMapStyle : lightMapStyle });
+                    }
+                });
+            }
+            
+            function addMarker(family) {
+                const marker = new google.maps.Marker({
+                    position: { lat: family.lat, lng: family.lng },
+                    map: map,
+                    title: family.name,
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: 10,
+                        fillColor: "#5D5CDE",
+                        fillOpacity: 0.9,
+                        strokeWeight: 2,
+                        strokeColor: "#FFFFFF"
+                    }
+                });
+                
+                // Add click event to marker
+                marker.addListener('click', () => {
+                    // Create info window content
+                    const content = `
+                        <div class="p-3" style="max-width: 300px;">
+                            <h3 class="font-bold text-lg mb-1">${family.name}</h3>
+                            <p class="mb-1">${family.children}</p>
+                            <p class="mb-1">Interests: ${family.interests}</p>
+                            <p class="mb-2 text-primary">Available: ${family.availability}</p>
+                            <button id="btn-request-${family.id}" class="bg-primary text-white px-3 py-1 rounded text-sm font-medium">
+                                Request Playdate
+                            </button>
+                        </div>
+                    `;
+                    
+                    // Create and open info window
+                    const infowindow = new google.maps.InfoWindow({
+                        content: content
+                    });
+                    
+                    infowindow.open(map, marker);
+                    
+                    // Add event listener for request button
+                    google.maps.event.addListener(infowindow, 'domready', () => {
+                        document.getElementById(`btn-request-${family.id}`).addEventListener('click', () => {
+                            infowindow.close();
+                            showRequestModal(family);
+                        });
+                    });
+                });
+                
+                markers.push({ marker, familyId: family.id });
+                return marker;
+            }
+            
+            function filterFamilies() {
+                const distanceFilter = parseInt(document.getElementById('map-distance').value);
+                const ageFilter = document.getElementById('map-age-range').value;
+                const availabilityFilter = document.getElementById('map-available').value;
+                
+                // Filter families based on criteria
+                const filteredFamilies = familyLocations.filter(family => {
+                    // Distance filtering
+                    if (family.distance > distanceFilter) {
+                        return false;
+                    }
+                    
+                    // Age range filtering (simplified for demo)
+                    if (ageFilter !== 'all') {
+                        // This is a simple check that would be more robust in a real app
+                        if (ageFilter === '0-2' && !family.children.includes('2')) return false;
+                        if (ageFilter === '3-5' && !family.children.includes('3') && !family.children.includes('4') && !family.children.includes('5')) return false;
+                        if (ageFilter === '6-8' && !family.children.includes('6') && !family.children.includes('7') && !family.children.includes('8')) return false;
+                        if (ageFilter === '9-12' && !family.children.includes('9')) return false;
+                    }
+                    
+                    // Availability filtering (simplified for demo)
+                    if (availabilityFilter !== 'all') {
+                        if (availabilityFilter === 'this-week' && !family.availability.includes('11') && !family.availability.includes('12') && !family.availability.includes('13') && !family.availability.includes('14')) return false;
+                        if (availabilityFilter === 'weekend' && !family.availability.includes('12') && !family.availability.includes('13')) return false;
+                        if (availabilityFilter === 'weekday' && !family.availability.includes('14') && !family.availability.includes('15') && !family.availability.includes('16') && !family.availability.includes('17') && !family.availability.includes('18')) return false;
+                    }
+                    
+                    return true;
+                });
+                
+                // Update markers visibility
+                markers.forEach(({ marker, familyId }) => {
+                    const shouldShow = filteredFamilies.some(family => family.id === familyId);
+                    marker.setVisible(shouldShow);
+                });
+                
+                // Update the list of families
+                updateFamilyList(filteredFamilies);
+            }
+            
+            function updateFamilyList(families) {
+                const listContainer = document.getElementById('map-families-list');
+                listContainer.innerHTML = '';
+                
+                if (families.length === 0) {
+                    listContainer.innerHTML = `
+                        <div class="text-center py-4 text-gray-500 dark:text-gray-400">
+                            <i class="fas fa-search mb-2 text-3xl"></i>
+                            <p>No families match your filters. Try adjusting your criteria.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                families.forEach(family => {
+                    const familyCard = document.createElement('div');
+                    familyCard.className = 'bg-white dark:bg-gray-750 border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow duration-200';
+                    familyCard.innerHTML = `
+                        <div class="flex justify-between items-start flex-wrap">
+                            <div class="mb-2 sm:mb-0">
+                                <h3 class="font-medium">${family.name}</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">${family.children}</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Interests: ${family.interests}</p>
+                                <p class="text-sm text-primary dark:text-primaryLight mt-1">Available: ${family.availability}</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">${family.distance} miles away</p>
+                            </div>
+                            <div class="flex flex-col md:items-end">
+                                <button class="map-request-button bg-primary hover:bg-primaryDark text-white rounded-lg px-3 py-1 text-sm transition-colors duration-200 mt-2" 
+                                        data-family-id="${family.id}">
+                                    Request Playdate
+                                </button>
+                                <button class="view-on-map bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-lg px-3 py-1 text-sm transition-colors duration-200 mt-2"
+                                        data-family-id="${family.id}">
+                                    <i class="fas fa-map-marker-alt mr-1"></i> View on Map
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    listContainer.appendChild(familyCard);
+                });
+                
+                // Add event listeners to buttons
+                document.querySelectorAll('.map-request-button').forEach(button => {
+                    button.addEventListener('click', () => {
+                        const familyId = parseInt(button.getAttribute('data-family-id'));
+                        const family = families.find(f => f.id === familyId);
+                        if (family) {
+                            showRequestModal(family);
+                        }
+                    });
+                });
+                
+                document.querySelectorAll('.view-on-map').forEach(button => {
+                    button.addEventListener('click', () => {
+                        const familyId = parseInt(button.getAttribute('data-family-id'));
+                        const family = families.find(f => f.id === familyId);
+                        if (family && map) {
+                            map.setCenter({ lat: family.lat, lng: family.lng });
+                            map.setZoom(15);
+                            
+                            // Find and trigger click on the marker
+                            const markerObj = markers.find(m => m.familyId === familyId);
+                            if (markerObj) {
+                                google.maps.event.trigger(markerObj.marker, 'click');
+                            }
+                        }
+                    });
+                });
+            }
+            
+            function showRequestModal(family) {
+                const modal = document.getElementById('request-modal');
+                const requestingFamily = document.getElementById('requesting-family');
+                
+                // Update modal with family info
+                requestingFamily.innerHTML = `
+                    <h4 class="font-medium mb-2">${family.name}</h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">${family.children}</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Interests: ${family.interests}</p>
+                `;
+                
+                modal.classList.remove('hidden');
+            }
+            
+            function isDarkMode() {
+                return document.documentElement.classList.contains('dark');
+            }
+            
+            // Light and dark map styles
+            const lightMapStyle = [
+                {
+                    "featureType": "administrative",
+                    "elementType": "labels.text.fill",
+                    "stylers": [{ "color": "#444444" }]
+                },
+                {
+                    "featureType": "landscape",
+                    "elementType": "all",
+                    "stylers": [{ "color": "#f2f2f2" }]
+                },
+                {
+                    "featureType": "poi",
+                    "elementType": "all",
+                    "stylers": [{ "visibility": "off" }]
+                },
+                {
+                    "featureType": "road",
+                    "elementType": "all",
+                    "stylers": [{ "saturation": -100 }, { "lightness": 45 }]
+                },
+                {
+                    "featureType": "road.highway",
+                    "elementType": "all",
+                    "stylers": [{ "visibility": "simplified" }]
+                },
+                {
+                    "featureType": "road.arterial",
+                    "elementType": "labels.icon",
+                    "stylers": [{ "visibility": "off" }]
+                },
+                {
+                    "featureType": "transit",
+                    "elementType": "all",
+                    "stylers": [{ "visibility": "off" }]
+                },
+                {
+                    "featureType": "water",
+                    "elementType": "all",
+                    "stylers": [{ "color": "#c4e5f9" }, { "visibility": "on" }]
+                }
+            ];
+            
+            const darkMapStyle = [
+                {
+                    "elementType": "geometry",
+                    "stylers": [{ "color": "#242f3e" }]
+                },
+                {
+                    "elementType": "labels.text.fill",
+                    "stylers": [{ "color": "#746855" }]
+                },
+                {
+                    "elementType": "labels.text.stroke",
+                    "stylers": [{ "color": "#242f3e" }]
+                },
+                {
+                    "featureType": "administrative.locality",
+                    "elementType": "labels.text.fill",
+                    "stylers": [{ "color": "#d59563" }]
+                },
+                {
+                    "featureType": "poi",
+                    "elementType": "labels.text.fill",
+                    "stylers": [{ "color": "#d59563" }]
+                },
+                {
+                    "featureType": "poi.park",
+                    "elementType": "geometry",
+                    "stylers": [{ "color": "#263c3f" }]
+                },
+                {
+                    "featureType": "poi.park",
+                    "elementType": "labels.text.fill",
+                    "stylers": [{ "color": "#6b9a76" }]
+                },
+                {
+                    "featureType": "road",
+                    "elementType": "geometry",
+                    "stylers": [{ "color": "#38414e" }]
+                },
+                {
+                    "featureType": "road",
+                    "elementType": "geometry.stroke",
+                    "stylers": [{ "color": "#212a37" }]
+                },
+                {
+                    "featureType": "road",
+                    "elementType": "labels.text.fill",
+                    "stylers": [{ "color": "#9ca5b3" }]
+                },
+                {
+                    "featureType": "road.highway",
+                    "elementType": "geometry",
+                    "stylers": [{ "color": "#746855" }]
+                },
+                {
+                    "featureType": "road.highway",
+                    "elementType": "geometry.stroke",
+                    "stylers": [{ "color": "#1f2835" }]
+                },
+                {
+                    "featureType": "road.highway",
+                    "elementType": "labels.text.fill",
+                    "stylers": [{ "color": "#f3d19c" }]
+                },
+                {
+                    "featureType": "transit",
+                    "elementType": "geometry",
+                    "stylers": [{ "color": "#2f3948" }]
+                },
+                {
+                    "featureType": "transit.station",
+                    "elementType": "labels.text.fill",
+                    "stylers": [{ "color": "#d59563" }]
+                },
+                {
+                    "featureType": "water",
+                    "elementType": "geometry",
+                    "stylers": [{ "color": "#17263c" }]
+                },
+                {
+                    "featureType": "water",
+                    "elementType": "labels.text.fill",
+                    "stylers": [{ "color": "#515c6d" }]
+                },
+                {
+                    "featureType": "water",
+                    "elementType": "labels.text.stroke",
+                    "stylers": [{ "color": "#17263c" }]
+                }
+            ];
+            
+            // Get more ideas button
+            const getMoreIdeasButton = document.getElementById('get-more-ideas');
+            getMoreIdeasButton.addEventListener('click', async () => {
+                showLoadingOverlay('Getting playdate ideas...');
+                
+                try {
+                    await window.Poe.sendUserMessage(
+                        "@Claude-3.7-Sonnet Suggest 5 creative, age-appropriate playdate activities for children aged 3-7 years old. For each idea, include: 1) Activity name, 2) Brief description, 3) Required materials, 4) Estimated duration, 5) Benefits for children. Format as a simple list, no additional text.",
+                        { 
+                            handler: "ideas-handler",
+                            stream: true,
+                            openChat: false 
+                        }
+                    );
+                } catch (err) {
+                    hideLoadingOverlay();
+                    showAlert('Could not get playdate ideas. Please try again later.', 'error');
+                }
+            });
+            
+            // Register handler for AI-generated playdate ideas
+            if (window.Poe) {
+                window.Poe.registerHandler("ideas-handler", (result) => {
+                    const msg = result.responses[0];
+                    
+                    if (msg.status === "error") {
+                        hideLoadingOverlay();
+                        showAlert('Error getting playdate ideas: ' + msg.statusText, 'error');
+                    } else if (msg.status === "complete") {
+                        hideLoadingOverlay();
+                        
+                        // Create a modal to display the ideas
+                        const ideasModal = document.createElement('div');
+                        ideasModal.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50';
+                        ideasModal.id = 'ideas-modal';
+                        
+                        ideasModal.innerHTML = `
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 max-w-lg w-full mx-4 max-h-[80vh] overflow-y-auto">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-xl font-semibold">Playdate Activity Ideas</h3>
+                                <button id="close-ideas-modal" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="prose dark:prose-invert prose-sm max-w-none">
+                                ${msg.content}
+                            </div>
+                        </div>
+                        `;
+                        
+                        document.body.appendChild(ideasModal);
+                        
+                        // Add close functionality
+                        const closeIdeasButton = document.getElementById('close-ideas-modal');
+                        closeIdeasButton.addEventListener('click', () => {
+                            ideasModal.remove();
+                        });
+                        
+                        // Close modal if clicked outside
+                        ideasModal.addEventListener('click', (e) => {
+                            if (e.target === ideasModal) {
+                                ideasModal.remove();
+                            }
+                        });
+                    }
+                });
+            }
+            
+            // Helper functions
+            function showLoadingOverlay(message = 'Loading...') {
+                const loadingOverlay = document.getElementById('loading-overlay');
+                const loadingText = document.getElementById('loading-text');
+                
+                loadingText.textContent = message;
+                loadingOverlay.classList.remove('hidden');
+            }
+            
+            function hideLoadingOverlay() {
+                const loadingOverlay = document.getElementById('loading-overlay');
+                loadingOverlay.classList.add('hidden');
+            }
+            
+            function showAlert(message, type = 'info') {
+                // Create alert element
+                const alert = document.createElement('div');
+                
+                let bgColor = 'bg-blue-500';
+                if (type === 'success') bgColor = 'bg-green-500';
+                if (type === 'error') bgColor = 'bg-red-500';
+                if (type === 'warning') bgColor = 'bg-yellow-500';
+                
+                alert.className = `fixed bottom-4 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center`;
+                
+                let icon = '';
+                if (type === 'success') icon = '<i class="fas fa-check-circle mr-2"></i>';
+                if (type === 'error') icon = '<i class="fas fa-exclamation-circle mr-2"></i>';
+                if (type === 'warning') icon = '<i class="fas fa-exclamation-triangle mr-2"></i>';
+                if (type === 'info') icon = '<i class="fas fa-info-circle mr-2"></i>';
+                
+                alert.innerHTML = `
+                    ${icon}
+                    <span>${message}</span>
+                `;
+                
+                document.body.appendChild(alert);
+                
+                // Remove after 3 seconds
+                setTimeout(() => {
+                    alert.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+                    setTimeout(() => {
+                        alert.remove();
+                    }, 500);
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>
